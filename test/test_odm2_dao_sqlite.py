@@ -5,7 +5,7 @@ import unittest
 
 from wof.examples.flask.odm2.timeseries.odm2_timeseries_dao import Odm2Dao as OdmDao  # noqa
 
-ODM2_DATABASE_URI = 'sqlite:///' + "./odm2/ODM2.sqlite"
+ODM2_DATABASE_URI = 'sqlite:///' + os.path.join(os.path.dirname(__file__), "odm2/ODM2.sqlite")
 ODM2_ONFIG_PATH = os.path.join(
     os.path.dirname(__file__),
     'test_odm2_sqlite.cfg'
@@ -295,3 +295,12 @@ class TestOdmDao(unittest.TestCase):
         resultVarCodes = [v.VariableCode for v in varResultList]
         for known_code in self.known_var_codes:
             self.assertTrue(known_code in resultVarCodes)
+
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.makeSuite(TestOdmDao))
+    return suite
+
+
+if __name__ == '__main__':
+    unittest.main(defaultTest='suite')

@@ -5,7 +5,7 @@ import unittest
 
 from wof.examples.flask.odm2.timeseries.odm2_timeseries_dao import Odm2Dao as OdmDao  # noqa
 
-ODM2_DATABASE_URI = 'sqlite:///' + "./test/odm2/ODM2.sqlite"
+ODM2_DATABASE_URI = 'sqlite:///' + "./odm2/ODM2.sqlite"
 ODM2_ONFIG_PATH = os.path.join(
     os.path.dirname(__file__),
     'test_odm2_sqlite.cfg'

@@ -31,6 +31,19 @@ class Odm2Dao(BaseDao):
         self.db_session = scoped_session(sessionmaker(
             autocommit=False, autoflush=False, bind=self.engine))
 
+        # Specify polymorphic objects
+        # aliased: when True, the selectable will be wrapped in an alias, that is
+        # (SELECT * FROM <fromclauses>) AS anon_1. This can be important when using the with_
+        # polymorphic() to create the target of a JOIN on a backend that does not support
+        # parenthesized joins, such as SQLite and older versions of MySQL.
+
+        self.Sites = with_polymorphic(odm2_models.SamplingFeatures,
+                                      [odm2_models.Sites],
+                                      aliased=True)
+        self.TimeSeriesResults = with_polymorphic(odm2_models.Results,
+                                                  [odm2_models.TimeSeriesResults],
+                                                  aliased=True)
+
 
 
         #odm2_models.Base.query = self.db_session.query_property()
@@ -39,7 +52,7 @@ class Odm2Dao(BaseDao):
         self.db_session.close()
 
     def get_all_sites(self):
-        s_rArr = self.db_session.query(odm2_models.Sites,odm2_models.TimeSeriesResults).\
+        s_rArr = self.db_session.query(self.Sites, self.TimeSeriesResults).\
             join(odm2_models.FeatureActions).\
             filter(odm2_models.FeatureActions.SamplingFeatureID == odm2_models.Sites.SamplingFeatureID,
                    odm2_models.TimeSeriesResults.FeatureActionID == odm2_models.FeatureActions.FeatureActionID). \
@@ -61,7 +74,7 @@ class Odm2Dao(BaseDao):
     def get_site_by_code(self, site_code):
         w_s = None
         try:
-            s = self.db_session.query(odm2_models.Sites).\
+            s = self.db_session.query(self.Sites).\
                 filter(odm2_models.Sites.SamplingFeatureCode == site_code).one()
         except:
             s = None
@@ -84,8 +97,8 @@ class Odm2Dao(BaseDao):
         west - xmin - longitude
         east - xmax - longitude
         """
-        s_rArr = self.db_session.query(odm2_models.TimeSeriesResults,
-                                       odm2_models.Sites).\
+        s_rArr = self.db_session.query(self.TimeSeriesResults,
+                                       self.Sites).\
             join(odm2_models.FeatureActions). \
             filter(odm2_models.FeatureActions.SamplingFeatureID == odm2_models.Sites.SamplingFeatureID,
                    odm2_models.TimeSeriesResults.FeatureActionID == odm2_models.FeatureActions.FeatureActionID,
@@ -154,10 +167,10 @@ class Odm2Dao(BaseDao):
         return v_arr
 
     def get_series_by_sitecode(self, site_code):
-        r = self.db_session.query(odm2_models.TimeSeriesResults).\
+        r = self.db_session.query(self.TimeSeriesResults).\
             join(odm2_models.FeatureActions).\
             join(odm2_models.SamplingFeatures).\
-            filter(odm2_models.TimeSeriesResults.FeatureActionID == odm2_models.FeatureActions.FeatureActionID,
+            filter(odm2_models.TimeSeriesResults.FeatureActionID == odm2_models.FeatureActions.FeatureActionID, # noqa
                    odm2_models.SamplingFeatures.SamplingFeatureCode == site_code).\
             group_by(odm2_models.TimeSeriesResults.VariableID).all()
         r_arr = []
@@ -165,13 +178,13 @@ class Odm2Dao(BaseDao):
         for i in range(len(r)):
             if i is 0:
                 aff = self.db_session.query(odm2_models.Affiliations).\
-                    filter(odm2_models.Affiliations.OrganizationID == r[i].FeatureActionObj.ActionObj.MethodObj.OrganizationID).first()
+                    filter(odm2_models.Affiliations.OrganizationID == r[i].FeatureActionObj.ActionObj.MethodObj.OrganizationID).first() # noqa
             w_r = model.Series(r[i],aff)
             r_arr.append(w_r)
         return r_arr
 
     def get_series_by_sitecode_and_varcode(self, site_code, var_code):
-        r = self.db_session.query(odm2_models.TimeSeriesResults).\
+        r = self.db_session.query(self.TimeSeriesResults).\
             join(odm2_models.FeatureActions).\
             join(odm2_models.SamplingFeatures).\
             join(odm2_models.Variables).\

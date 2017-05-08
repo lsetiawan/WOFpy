@@ -4,9 +4,8 @@ import logging
 
 import wof
 import wof.flask
-from wof.examples.flask.csv_server.csv_dao import CsvDao
-from werkzeug.wsgi import DispatcherMiddleware
-from werkzeug.exceptions import NotFound
+from wof.examples.flask_notworking.csv_server import CsvDao
+
 CSV_CONFIG_FILE = 'csv_config.cfg'
 CSV_CONFIG_FILE2 = 'csv_config_multi.cfg'
 SITES_FILE = 'sites.csv'

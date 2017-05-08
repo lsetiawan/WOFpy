@@ -1,28 +1,22 @@
 from __future__ import (absolute_import, division, print_function)
 
 import csv
-import os
 
-import pytz
 from dateutil.parser import parse
-from pytz import timezone
+from dateutil.tz import tzoffset as tz
 
-import wof.examples.flask.csv_server.csv_model
+import wof.examples.flask_notworking.csv_tutorial.solution.csv_model as csv_model
 import wof.models as wof_base
 from wof.dao import BaseDao
 
+
 class CsvDao(BaseDao):
-    #local_time_zone = tz(None, -21600)
-    local_time_zone = timezone('US/Central')
-    #utc_time_zone = tz(None,0)
-    utc_time_zone=pytz.utc
+    local_time_zone = tz(None, -21600)
+    utc_time_zone = tz(None,0)
 
     def __init__(self, sites_file_path, values_file_path):
-        #self.sites_file_path = sites_file_path
-        #self.values_file_path = values_file_path
-
-        self.sites_file_path = os.path.abspath(sites_file_path)
-        self.values_file_path = os.path.abspath(values_file_path)
+        self.sites_file_path = sites_file_path
+        self.values_file_path = values_file_path
 
         # Build a dictionary of variables indexed by code
         variable_dict = {}
@@ -214,15 +208,13 @@ class CsvDao(BaseDao):
         # six hours behind UTC time.
         value_date = parse(row[1])
 
-        #value_date = value_date.replace(tzinfo=self.local_time_zone)
-        value_date = self.local_time_zone.localize(value_date)
+        value_date = value_date.replace(tzinfo=self.local_time_zone)
         #datavalue.LocalDateTime = value_date.isoformat()
         datavalue.LocalDateTime = value_date # Use the object
         #value_date = value_date + timedelta(hours=6)
-        #delta = self.local_time_zone._utcoffset
-        #value_date_utc = value_date - delta
-        #value_date_utc = value_date_utc.replace (tzinfo=self.utc_time_zone)
-        value_date_utc = value_date.astimezone(self.utc_time_zone)
+        delta = self.local_time_zone._offset
+        value_date_utc = value_date - delta
+        value_date_utc = value_date_utc.replace (tzinfo=None)
         #datavalue.DateTimeUTC = value_date_utc.isoformat() + 'Z'
         datavalue.DateTimeUTC = value_date_utc    # Use the object
         return datavalue
@@ -290,12 +282,4 @@ class CsvDao(BaseDao):
         return []
 
     def get_offsettypes_by_ids(self, offset_type_id_arr):
-        return []
-
-    def get_qualcontrollvl_by_id(self, qualcontrollvl):
-        qcl = csv_model.QualityControlLevel()
-        return qcl
-
-
-    def get_qualcontrollvls_by_ids(self, qualcontrollvl_arr):
         return []

@@ -4,7 +4,7 @@ import logging
 
 import wof
 import wof.flask
-from wof.examples.flask.csv_server.csv_dao import CsvDao
+from wof.examples.flask_notworking.csv_server import CsvDao
 
 """
     python runserver_csv.py

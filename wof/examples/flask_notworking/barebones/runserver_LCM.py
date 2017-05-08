@@ -2,13 +2,9 @@ from __future__ import (absolute_import, division, print_function)
 
 import logging
 
-from werkzeug.wsgi import DispatcherMiddleware
-
 import wof
 import wof.flask
-from wof.flask import config
-from wof.flask import create_app
-from wof.examples.flask.barebones.LCM_dao import LCMDao
+from wof.examples.flask_notworking.barebones.LCM_dao import LCMDao
 
 logging.basicConfig(level=logging.DEBUG)
 

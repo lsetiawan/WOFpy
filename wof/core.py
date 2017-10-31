@@ -124,10 +124,6 @@ class WOFConfig(object):
                 self.menu_group_name = config.get('WOF_1_1', 'Menu_Group_Name')
             else:
                 self.menu_group_name = config.get('WOF', 'Menu_Group_Name')
-            if config.has_option('WOF_1_1', 'Service_WSDL'):
-                self.service_wsdl = config.get('WOF_1_1', 'Service_WSDL')
-            else:
-                self.service_wsdl = config.get('WOF', 'Service_WSDL')
             if config.has_option('WOF_1_1', 'Timezone'):
                 self.timezone = config.get('WOF_1_1', 'Timezone')
             else:
